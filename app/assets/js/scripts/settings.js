@@ -1490,7 +1490,7 @@ function populateAboutVersionInformation(){
  */
 function populateReleaseNotes(){
     $.ajax({
-        url: 'https://github.com/dscalzi/HeliosLauncher/releases.atom',
+        url: 'https://github.com/vialolis/MysticOdysseyLauncher/releases.atom',
         success: (data) => {
             const version = 'v' + remote.app.getVersion()
             const entries = $(data).find('entry')
@@ -1617,4 +1617,4 @@ async function prepareSettings(first = false) {
 }
 
 // Prepare the settings UI on startup.
-//prepareSettings(true)
+prepareSettings(true)

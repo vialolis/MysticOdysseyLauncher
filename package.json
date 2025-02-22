@@ -1,13 +1,13 @@
 {
   "name": "mysticodyssey",
-  "version": "2.2.1",
+  "version": "2.2.3",
   "productName": "Mystic Odyssey",
   "description": "Minecraft launcher for Mystic Odyssey project",
   "author": "",
   "license": "UNLICENSED",
   "homepage": "",
   "bugs": {
-    "url": ""
+    "url": "https://github.com/vialolis/MysticOdysseyLauncher/issues"
   },
   "private": true,
   "main": "index.js",
@@ -46,6 +46,6 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/dscalzi/HeliosLauncher.git"
+    "url": "git+https://github.com/vialolis/MysticOdysseyLauncher.git"
   }
 }

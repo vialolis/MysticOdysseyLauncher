@@ -11,8 +11,8 @@ mediaYouTubeURL = "https://www.youtube.com/@EthanBelli"
 mediaDiscordURL = "https://discord.gg/4E4ACHvQzz"
 
 [ejs.settings]
-sourceGithubLink = "https://github.com/dscalZi/HeliosLauncher"
-supportLink = "https://github.com/dscalZi/HeliosLauncher/issues"
+sourceGithubLink = "https://github.com/vialolis/MysticOdysseyLauncher"
+supportLink = "https://github.com/vialolis/MysticOdysseyLauncher/issues"
 
 [ejs.welcome]
 welcomeHeader = "WELCOME TO WESTEROSCRAFT"

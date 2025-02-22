@@ -147,113 +147,87 @@ document.getElementById('avatarOverlay').onclick = async e => {
 }
 
 // Обновление выбранной учетной записи
-function updateSelectedAccount(authUser) {
-    let username = 'No Account Selected';
-    let avatarUrl = 'default-avatar.png'; // Default avatar URL
+// function updateSelectedAccount(authUser) {
+//     let username = 'No Account Selected';
+//     let avatarUrl = 'default-avatar.png'; // Default avatar URL
 
-    // Получаем элементы интерфейса
-    const accountNameElement = document.getElementById('user_text'); // Элемент для имени пользователя
-    const accountAvatarElement = document.getElementById('accountAvatar'); // Элемент для аватарки
+//     // Получаем элементы интерфейса
+//     const accountNameElement = document.getElementById('user_text'); // Элемент для имени пользователя
+//     const accountAvatarElement = document.getElementById('accountAvatar'); // Элемент для аватарки
 
-    // Если authUser существует, используем его данные
-    if (authUser != null) {
-        username = authUser.username || 'Guest';
+//     // Если authUser существует, используем его данные
+//     if (authUser != null) {
+//         username = authUser.username || 'Guest';
 
-        // Проверяем, есть ли полный URL аватарки в данных пользователя
-        avatarUrl = authUser.avatar || 'default-avatar.png'; // Используем полный URL из сервера
-    } else {
-        // Если authUser отсутствует, пытаемся получить данные из localStorage
-        const storedUserData = localStorage.getItem('user_data');
-        if (storedUserData) {
-            const userData = JSON.parse(storedUserData);
-            username = userData.username || 'Guest';
+//         // Проверяем, есть ли полный URL аватарки в данных пользователя
+//         avatarUrl = authUser.avatar || 'default-avatar.png'; // Используем полный URL из сервера
+//     } else {
+//         // Если authUser отсутствует, пытаемся получить данные из localStorage
+//         const storedUserData = localStorage.getItem('user_data');
+//         if (storedUserData) {
+//             const userData = JSON.parse(storedUserData);
+//             username = userData.username || 'Guest';
 
-            // Проверяем, есть ли полный URL аватарки в localStorage
-            avatarUrl = userData.avatar || 'default-avatar.png';
-        }
-    }
+//             // Проверяем, есть ли полный URL аватарки в localStorage
+//             avatarUrl = userData.avatar || 'default-avatar.png';
+//         }
+//     }
 
-    // Обновляем текст имени пользователя
-    if (accountNameElement) {
-        accountNameElement.innerText = username;
-    } else {
-        console.warn('Account name element not found');
-    }
+//     // Обновляем текст имени пользователя
+//     if (accountNameElement) {
+//         accountNameElement.innerText = username;
+//     } else {
+//         console.warn('Account name element not found');
+//     }
 
-    // Обновляем аватарку
-    if (accountAvatarElement) {
-        // Устанавливаем полный URL для аватарки
-        accountAvatarElement.src = avatarUrl;
+//     // Обновляем аватарку
+//     if (accountAvatarElement) {
+//         // Устанавливаем полный URL для аватарки
+//         accountAvatarElement.src = avatarUrl;
 
-        // Логируем, откуда взят URL аватарки
-        console.log(`Avatar URL set to: ${avatarUrl}`);
-    } else {
-        console.warn('Account avatar element not found');
-    }
-}
+//         // Логируем, откуда взят URL аватарки
+//         console.log(`Avatar URL set to: ${avatarUrl}`);
+//     } else {
+//         console.warn('Account avatar element not found');
+//     }
+// }
 
 // Call this function when the page is fully loaded
-document.addEventListener('DOMContentLoaded', () => {
-    // Пытаемся получить данные пользователя из localStorage
-    const storedUserData = localStorage.getItem('user_data');
-    if (storedUserData) {
-        const userData = JSON.parse(storedUserData);
+// document.addEventListener('DOMContentLoaded', () => {
+//     // Пытаемся получить данные пользователя из localStorage
+//     const storedUserData = localStorage.getItem('user_data');
+//     if (storedUserData) {
+//         const userData = JSON.parse(storedUserData);
 
-        // Логируем, что данные пользователя загружены из localStorage
-        console.log('User data loaded from localStorage:', userData);
+//         // Логируем, что данные пользователя загружены из localStorage
+//         console.log('User data loaded from localStorage:', userData);
 
-        // Обновляем интерфейс с сохраненными данными
-        updateSelectedAccount(userData);
-    } else {
-        // Если данных нет, показываем "No Account Selected"
-        updateSelectedAccount(null);
+//         // Обновляем интерфейс с сохраненными данными
+//         updateSelectedAccount(userData);
+//     } else {
+//         // Если данных нет, показываем "No Account Selected"
+//         updateSelectedAccount(null);
+//     }
+// });
+
+
+
+// Bind selected account
+function updateSelectedAccount(authUser){
+    let username = Lang.queryJS('landing.selectedAccount.noAccountSelected')
+    if(authUser != null){
+        if(authUser.displayName != null){
+            username = authUser.displayName
+        }
+        if(authUser.uuid != null){
+            document.getElementById('avatarContainer').style.backgroundImage = `url('https://mc-heads.net/body/${authUser.uuid}/right')`
+        }
     }
-});
-
-// Пример кода для работы с Microsoft аккаунтом
-async function loginWithMicrosoft() {
-    // Ваш код для авторизации через Microsoft
-    // После успешной авторизации:
-    // const userData = await getUserDataFromMicrosoft();
-    // updateSelectedAccount(userData);
+    user_text.innerHTML = username
 }
+updateSelectedAccount(ConfigManager.getSelectedAccount())
 
 
-
-
-
-
-// Bind selected account from my website
-// function updateSelectedAccountFromWebsite(authUser){
-//     let username = 'No Account Selected'
-//     if(authUser != null){
-//         if(authUser.displayName != null){
-//             username = authUser.displayName
-//         }
-//         if(authUser.uuid != null){
-//             document.getElementById('avatarContainer').style.backgroundImage = `url('https://mc-heads.net/body/${authUser.uuid}/right')`
-//         }
-//     }
-//     user_text.innerHTML = username
-// }
-
-// // Example function to fetch account from your website
-// async function fetchAccountFromWebsite() {
-//     try {
-//         const response = await fetch('http://127.0.0.1:5000/api/user')
-//         if (response.ok) {
-//             const account = await response.json()
-//             updateSelectedAccountFromWebsite(account)
-//         } else {
-//             console.error('Failed to fetch account from website')
-//         }
-//     } catch (error) {
-//         console.error('Error fetching account from website:', error)
-//     }
-// }
-
-// // Call the function to fetch account from your website
-// fetchAccountFromWebsite()
 
 
 

@@ -147,30 +147,84 @@ loginCancelButton.onclick = (e) => {
 // Disable default form behavior.
 loginForm.onsubmit = () => { return false; };
 
-// Функция для отключения/включения формы
-function formDisabled(isDisabled) {
-    const inputs = document.querySelectorAll('#loginForm input');
-    inputs.forEach(input => {
-        input.disabled = isDisabled;
-    });
-    document.getElementById('loginButton').disabled = isDisabled;
-}
 
-// Функция для показа/скрытия состояния загрузки
-function loginLoading(isLoading) {
-    const loginButton = document.getElementById('loginButton');
-    if (isLoading) {
-        loginButton.innerHTML = `<span class="loading-text">${Lang.queryJS('login.loggingIn')}</span>`;
-        loginButton.classList.add('loading');
-    } else {
-        loginButton.innerHTML = Lang.queryJS('login.login');
-        loginButton.classList.remove('loading');
-    }
-}
+// Bind login button behavior.
+loginButton.addEventListener('click', () => {
+    // Disable form.
+    formDisabled(true)
+
+    // Show loading stuff.
+    loginLoading(true)
+
+    AuthManager.addMojangAccount(loginUsername.value, loginPassword.value).then((value) => {
+        updateSelectedAccount(value)
+        loginButton.innerHTML = loginButton.innerHTML.replace(Lang.queryJS('login.loggingIn'), Lang.queryJS('login.success'))
+        $('.circle-loader').toggleClass('load-complete')
+        $('.checkmark').toggle()
+        setTimeout(() => {
+            switchView(VIEWS.login, loginViewOnSuccess, 500, 500, async () => {
+                // Temporary workaround
+                if(loginViewOnSuccess === VIEWS.settings){
+                    await prepareSettings()
+                }
+                loginViewOnSuccess = VIEWS.landing // Reset this for good measure.
+                loginCancelEnabled(false) // Reset this for good measure.
+                loginViewCancelHandler = null // Reset this for good measure.
+                loginUsername.value = ''
+                loginPassword.value = ''
+                $('.circle-loader').toggleClass('load-complete')
+                $('.checkmark').toggle()
+                loginLoading(false)
+                loginButton.innerHTML = loginButton.innerHTML.replace(Lang.queryJS('login.success'), Lang.queryJS('login.login'))
+                formDisabled(false)
+            })
+        }, 1000)
+    }).catch((displayableError) => {
+        loginLoading(false)
+
+        let actualDisplayableError
+        if(isDisplayableError(displayableError)) {
+            msftLoginLogger.error('Error while logging in.', displayableError)
+            actualDisplayableError = displayableError
+        } else {
+            // Uh oh.
+            msftLoginLogger.error('Unhandled error during login.', displayableError)
+            actualDisplayableError = Lang.queryJS('login.error.unknown')
+        }
+
+        setOverlayContent(actualDisplayableError.title, actualDisplayableError.desc, Lang.queryJS('login.tryAgain'))
+        setOverlayHandler(() => {
+            formDisabled(false)
+            toggleOverlay(false)
+        })
+        toggleOverlay(true)
+    })
+
+})
+
+
+// Функция для отключения/включения формы
+// function formDisabled(isDisabled) {
+//     const inputs = document.querySelectorAll('#loginForm input');
+//     inputs.forEach(input => {
+//         input.disabled = isDisabled;
+//     });
+//     document.getElementById('loginButton').disabled = isDisabled;
+// }
+
+// // Функция для показа/скрытия состояния загрузки
+// function loginLoading(isLoading) {
+//     const loginButton = document.getElementById('loginButton');
+//     if (isLoading) {
+//         loginButton.innerHTML = `<span class="loading-text">${Lang.queryJS('login.loggingIn')}</span>`;
+//         loginButton.classList.add('loading');
+//     } else {
+//         loginButton.innerHTML = Lang.queryJS('login.login');
+//         loginButton.classList.remove('loading');
+//     }
+// }
 
 // Обработчик клика по кнопке входа
-
-
 
 // document.getElementById('loginButton').addEventListener('click', async () => {
 //     const username = document.getElementById('loginUsername').value.trim();
@@ -226,56 +280,59 @@ function loginLoading(isLoading) {
 //     }
 // });
 
-document.getElementById('loginButton').addEventListener('click', async () => {
-    const username = document.getElementById('loginUsername').value.trim();
-    const password = document.getElementById('loginPassword').value.trim();
 
-    if (!username || !password) {
-        alert('Please enter both username and password.');
-        return;
-    }
 
-    try {
-        formDisabled(true);
-        loginLoading(true);
 
-        // Отправляем запрос на сервер для входа
-        const response = await fetch('http://127.0.0.1:5000/api/login', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ username, password })
-        });
+// document.getElementById('loginButton').addEventListener('click', async () => {
+    // const username = document.getElementById('loginUsername').value.trim();
+    // const password = document.getElementById('loginPassword').value.trim();
 
-        if (!response.ok) {
-            const errorData = await response.json();
-            throw new Error(errorData.msg || `HTTP error! Status: ${response.status}`);
-        }
+    // if (!username || !password) {
+    //     alert('Please enter both username and password.');
+    //     return;
+    // }
 
-        const data = await response.json();
-        const accessToken = data.access_token;
+    // try {
+    //     formDisabled(true);
+    //     loginLoading(true);
 
-        // Проверяем, есть ли данные о пользователе
-        const userData = data.user || {}; // Если данных нет, создаем пустой объект
-        const userInfo = {
-            username: userData.username || 'Guest', // Устанавливаем имя пользователя или "Guest"
-            avatar: userData.avatar || 'default-avatar.png' // Устанавливаем аватар или URL по умолчанию
-        };
+    //     // Отправляем запрос на сервер для входа
+    //     const response = await fetch('http://127.0.0.1:5000/api/login', {
+    //         method: 'POST',
+    //         headers: { 'Content-Type': 'application/json' },
+    //         body: JSON.stringify({ username, password })
+    //     });
 
-        // Сохранение токена и данных пользователя
-        localStorage.setItem('access_token', accessToken);
-        localStorage.setItem('user_data', JSON.stringify(userInfo));
+    //     if (!response.ok) {
+    //         const errorData = await response.json();
+    //         throw new Error(errorData.msg || `HTTP error! Status: ${response.status}`);
+    //     }
 
-        // Переключение представления на главную страницу
-        setTimeout(() => {
-            switchView(getCurrentView(), VIEWS.landing, 500, 500, () => {
-                // Обновляем данные пользователя в интерфейсе
-                updateSelectedAccount(userInfo);
-            });
-        }, 1000);
-    } catch (error) {
-        console.error('Login error:', error.message || error);
-        alert('Login failed. Please check your credentials.');
-        formDisabled(false);
-        loginLoading(false);
-    }
-});
+    //     const data = await response.json();
+    //     const accessToken = data.access_token;
+
+    //     // Проверяем, есть ли данные о пользователе
+    //     const userData = data.user || {}; // Если данных нет, создаем пустой объект
+    //     const userInfo = {
+    //         username: userData.username || 'Guest', // Устанавливаем имя пользователя или "Guest"
+    //         avatar: userData.avatar || 'default-avatar.png' // Устанавливаем аватар или URL по умолчанию
+    //     };
+
+    //     // Сохранение токена и данных пользователя
+    //     localStorage.setItem('access_token', accessToken);
+    //     localStorage.setItem('user_data', JSON.stringify(userInfo));
+
+    //     // Переключение представления на главную страницу
+    //     setTimeout(() => {
+    //         switchView(getCurrentView(), VIEWS.landing, 500, 500, () => {
+    //             // Обновляем данные пользователя в интерфейсе
+    //             updateSelectedAccount(userInfo);
+    //         });
+    //     }, 1000);
+    // } catch (error) {
+    //     console.error('Login error:', error.message || error);
+    //     alert('Login failed. Please check your credentials.');
+    //     formDisabled(false);
+    //     loginLoading(false);
+    // }
+// });
