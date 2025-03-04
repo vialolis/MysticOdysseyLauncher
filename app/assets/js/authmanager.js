@@ -130,6 +130,31 @@ function mojangErrorDisplayable(errorCode) {
 
 // Functions
 
+exports.addMOAacount = async function(username, password) {
+    try {
+        const response = await moRestAPI.authenticate(username, password, ConfigManager.getClientToken())
+        if(response.responseStatus === RestResponseStatus.SUCCESS) {
+            const session = response.data
+            if(session.selectedProfile != null){
+                const ret = ConfigManager.addMOAuthAccount(session.selectedProfile.id, session.accessToken, username, session.selectedProfile.name)
+                if(ConfigManager.getClientToken() == null){
+                    ConfigManager.setClientToken(session.clientToken)
+                }
+                ConfigManager.save()
+                return ret
+            } else {
+                return Promise.reject(mojangErrorDisplayable(MojangErrorCode.ERROR_NOT_PAID))
+            }
+        } else {
+            return Promise.reject(mojangErrorDisplayable(response.mojangErrorCode))
+        }
+    } catch (err){
+        log.error(err)
+        return Promise.reject(mojangErrorDisplayable(MojangErrorCode.UNKNOWN))
+    }
+}
+
+
 
 /**
  * Add a Mojang account. This will authenticate the given credentials with Mojang's

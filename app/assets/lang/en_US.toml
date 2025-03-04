@@ -31,11 +31,11 @@ loginRememberMeText = "remember me?"
 loginButtonText = "LOGIN"
 loginNeedAccountLink = "http://185.181.165.217:5000/register/"
 loginNeedAccountText = "Need an Account?"
-loginPasswordDisclaimer1 = "Your password is sent directly to mojang and never stored."
-loginPasswordDisclaimer2 = "{appName} is not affiliated with Mojang AB."
+loginPasswordDisclaimer1 = "Your password is sent directly to Mystic Odyssey and never stored."
 
 [ejs.loginOptions]
 loginOptionsTitle = "Choose Login Method"
+loginWithMySite = "Login with Mystic Odyssey"
 loginWithMicrosoft = "Login with Microsoft"
 loginWithMojang = "Login with Mojang"
 cancelButton = "Cancel"

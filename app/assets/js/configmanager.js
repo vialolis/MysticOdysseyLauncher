@@ -1,3 +1,4 @@
+const { uuid } = require('discord-rpc-patch/src/util')
 const fs   = require('fs-extra')
 const { LoggerUtil } = require('helios-core')
 const os   = require('os')
@@ -310,6 +311,42 @@ exports.getAuthAccounts = function(){
  * @returns {Object} The authenticated account with the given uuid.
  */
 exports.getAuthAccount = function(uuid){
+    return config.authenticationDatabase[uuid]
+}
+
+// Mystic Odyssey Accounts
+
+/** 
+*@param {string} uuid
+*@param {string} accessToken
+*
+*@returns {Object}
+*/
+
+exports.updateMOAuthAccount = function(uuid, accessToken){
+    config.authenticationDatabase[uuid].accessToken = accessToken
+    config.authenticationDatabase[uuid].type ='mysticodyssey' // For gradual conversion.
+    return config.authenticationDatabase[uuid]
+}
+
+
+/**
+ * @param {string} uuid
+ * @param {string} accessToken
+ * @param {string} username
+ * @param {string} displayName
+ * 
+ * @returns {Object}
+ */
+exports.addMOAuthAccount = function(uuid, accessToken, username, displayName){
+    config.selectedAccount = uuid
+    config.authenticationDatabase[uuid] = {
+        type: 'mysticodyssey',
+        accessToken,
+        username: username.trim(),
+        uuid: uuid.trim(),
+        displayName: displayName.trim()
+    }
     return config.authenticationDatabase[uuid]
 }
 

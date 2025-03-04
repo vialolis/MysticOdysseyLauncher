@@ -121,10 +121,10 @@ ipcMain.on('openAuthWindow', (event, authUrl) => {
     }
 
     authWindow = new BrowserWindow({
-        title: 'Authenticate with My Site',
+        title: 'Authenticate with Mystic Odyssey',
         backgroundColor: '#222222',
-        width: 520,
-        height: 600,
+        width: 540,
+        height: 700,
         frame: true,
         icon: getPlatformIcon('SealCircle')
     })
@@ -134,7 +134,7 @@ ipcMain.on('openAuthWindow', (event, authUrl) => {
     })
 
     authWindow.webContents.on('did-navigate', (_, uri) => {
-        if (uri.startsWith('https://my-site.com/auth/callback')) {
+        if (uri.startsWith('http://185.181.165.217:5000/auth/callback')) {
             let queries = new URL(uri).searchParams
             let queryMap = {}
             for (let [key, value] of queries.entries()) {

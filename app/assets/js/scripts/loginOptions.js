@@ -1,6 +1,7 @@
 const loginOptionsCancelContainer = document.getElementById('loginOptionCancelContainer')
 const loginOptionMicrosoft = document.getElementById('loginOptionMicrosoft')
 const loginOptionMojang = document.getElementById('loginOptionMojang')
+const loginOptionMysticOdyssey = document.getElementById('loginOptionMysticOdyssey')
 const registerOption = document.getElementById('registerRegister')
 const loginOptionsCancelButton = document.getElementById('loginOptionCancelButton')
 
@@ -20,6 +21,10 @@ function loginOptionsCancelEnabled(val){
 }
 
 
+// loginOptionMysticOdyssey.onclick = (e) => {
+//     const authUrl = "http://185.181.165.217:5000/oauth/authorize?from_launcher=true"
+//     ipcRenderer.send('openAuthWindow', authUrl)
+// }
 
 
 
@@ -40,6 +45,9 @@ loginOptionMojang.onclick = (e) => {
         loginCancelEnabled(true)
     })
 }
+
+
+
 
 loginOptionsCancelButton.onclick = (e) => {
     // switchView(getCurrentView(), loginOptionsViewOnCancel, 500, 500, () => {
