@@ -249,82 +249,82 @@ loginButton.addEventListener('click', (e) => {
 
 
 
-// Функция для отключения/включения формы
-// function formDisabled(isDisabled) {
-//     const inputs = document.querySelectorAll('#loginForm input');
-//     inputs.forEach(input => {
-//         input.disabled = isDisabled;
-//     });
-//     document.getElementById('loginButton').disabled = isDisabled;
-// }
+//Функция для отключения/включения формы
+function formDisabled(isDisabled) {
+    const inputs = document.querySelectorAll('#loginForm input');
+    inputs.forEach(input => {
+        input.disabled = isDisabled;
+    });
+    document.getElementById('loginButton').disabled = isDisabled;
+}
 
-// // Функция для показа/скрытия состояния загрузки
-// function loginLoading(isLoading) {
-//     const loginButton = document.getElementById('loginButton');
-//     if (isLoading) {
-//         loginButton.innerHTML = `<span class="loading-text">${Lang.queryJS('login.loggingIn')}</span>`;
-//         loginButton.classList.add('loading');
-//     } else {
-//         loginButton.innerHTML = Lang.queryJS('login.login');
-//         loginButton.classList.remove('loading');
-//     }
-// }
+// Функция для показа/скрытия состояния загрузки
+function loginLoading(isLoading) {
+    const loginButton = document.getElementById('loginButton');
+    if (isLoading) {
+        loginButton.innerHTML = `<span class="loading-text">${Lang.queryJS('login.loggingIn')}</span>`;
+        loginButton.classList.add('loading');
+    } else {
+        loginButton.innerHTML = Lang.queryJS('login.login');
+        loginButton.classList.remove('loading');
+    }
+}
 
-// Обработчик клика по кнопке входа
+//Обработчик клика по кнопке входа
 
-// document.getElementById('loginButton').addEventListener('click', async () => {
-//     const username = document.getElementById('loginUsername').value.trim();
-//     const password = document.getElementById('loginPassword').value.trim();
+document.getElementById('loginButton').addEventListener('click', async () => {
+    const username = document.getElementById('loginUsername').value.trim();
+    const password = document.getElementById('loginPassword').value.trim();
 
-//     if (!username || !password) {
-//         alert('Please enter both username and password.');
-//         return;
-//     }
+    if (!username || !password) {
+        alert('Please enter both username and password.');
+        return;
+    }
 
-//     try {
-//         formDisabled(true);
-//         loginLoading(true);
+    try {
+        formDisabled(true);
+        loginLoading(true);
 
-//         // Отправляем запрос на сервер для входа
-//         const response = await fetch('http://127.0.0.1:5000/api/login', {
-//             method: 'POST',
-//             headers: { 'Content-Type': 'application/json' },
-//             body: JSON.stringify({ username, password })
-//         });
+        // Отправляем запрос на сервер для входа
+        const response = await fetch('http://127.0.0.1:5000/api/login', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ username, password })
+        });
 
-//         if (!response.ok) {
-//             const errorData = await response.json();
-//             throw new Error(errorData.msg || `HTTP error! Status: ${response.status}`);
-//         }
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.msg || `HTTP error! Status: ${response.status}`);
+        }
 
-//         const data = await response.json();
-//         const accessToken = data.access_token;
+        const data = await response.json();
+        const accessToken = data.access_token;
 
-//         // Проверяем, есть ли данные о пользователе
-//         const userData = data.user || {}; // Если данных нет, создаем пустой объект
-//         const userInfo = {
-//             username: userData.username || 'Guest', // Устанавливаем имя пользователя или "Guest"
-//             avatar: userData.avatar || 'default-avatar.png' // Устанавливаем аватар или URL по умолчанию
-//         };
+        // Проверяем, есть ли данные о пользователе
+        const userData = data.user || {}; // Если данных нет, создаем пустой объект
+        const userInfo = {
+            username: userData.username || 'Guest', // Устанавливаем имя пользователя или "Guest"
+            avatar: userData.avatar || 'default-avatar.png' // Устанавливаем аватар или URL по умолчанию
+        };
 
-//         // Сохранение токена и данных пользователя
-//         localStorage.setItem('access_token', accessToken);
-//         localStorage.setItem('user_data', JSON.stringify(userInfo));
+        // Сохранение токена и данных пользователя
+        localStorage.setItem('access_token', accessToken);
+        localStorage.setItem('user_data', JSON.stringify(userInfo));
 
-//         // Переключение представления на главную страницу
-//         setTimeout(() => {
-//             switchView(getCurrentView(), VIEWS.landing, 500, 500, () => {
-//                 // Обновляем данные пользователя в интерфейсе
-//                 updateSelectedAccount(userInfo);
-//             });
-//         }, 1000);
-//     } catch (error) {
-//         console.error('Login error:', error.message || error);
-//         alert('Login failed. Please check your credentials.');
-//         formDisabled(false);
-//         loginLoading(false);
-//     }
-// });
+        // Переключение представления на главную страницу
+        setTimeout(() => {
+            switchView(getCurrentView(), VIEWS.landing, 500, 500, () => {
+                // Обновляем данные пользователя в интерфейсе
+                updateSelectedAccount(userInfo);
+            });
+        }, 1000);
+    } catch (error) {
+        console.error('Login error:', error.message || error);
+        alert('Login failed. Please check your credentials.');
+        formDisabled(false);
+        loginLoading(false);
+    }
+});
 
 
 
